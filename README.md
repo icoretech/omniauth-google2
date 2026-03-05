@@ -41,7 +41,10 @@ Rails.application.config.middleware.use OmniAuth::Builder do
 end
 ```
 
-Google OAuth app setup: [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+## Provider App Setup
+
+- Google Cloud Console: <https://console.cloud.google.com/apis/credentials>
+- Register callback URL (example): `https://your-app.example.com/auth/google_oauth2/callback`
 
 ## Options
 
@@ -141,6 +144,12 @@ After a baseline smoke succeeds, run these extra request-phase variants:
 - `?include_granted_scopes=true`
 
 These verify option pass-through and help catch provider-side UX or consent regressions.
+
+## Test Structure
+
+- `test/omniauth_google2_test.rb`: strategy/unit behavior
+- `test/rails_integration_test.rb`: full Rack/Rails request+callback flow
+- `test/test_helper.rb`: shared test bootstrap
 
 ## Release
 
