@@ -68,10 +68,11 @@ module OmniAuth
 
       def authorize_params
         super.tap do |params|
+          apply_request_authorize_overrides(params)
           params[:scope] = normalize_scope(params[:scope] || options[:scope])
           params[:access_type] ||= 'offline'
-          params[:include_granted_scopes] = 'true' if params[:include_granted_scopes] == true
-          session['omniauth.state'] = params[:state] if params[:state]
+          params[:include_granted_scopes] = normalize_include_granted_scopes(params[:include_granted_scopes])
+          persist_authorize_state(params)
         end
       end
 
@@ -99,6 +100,21 @@ module OmniAuth
         end.join(' ')
       end
 
+      def apply_request_authorize_overrides(params)
+        options[:authorize_options].each do |key|
+          request_value = request.params[key.to_s]
+          params[key] = request_value unless blank?(request_value)
+        end
+      end
+
+      def normalize_include_granted_scopes(value)
+        value == true ? 'true' : value
+      end
+
+      def persist_authorize_state(params)
+        session['omniauth.state'] = params[:state] if params[:state]
+      end
+
       def token_scope
         access_token.params['scope'] || access_token['scope']
       end
@@ -117,8 +133,12 @@ module OmniAuth
       end
     end
 
-    GoogleOauth2 = Google2
+    # Backward-compatible strategy name for existing `google_oauth2` callback paths.
+    class GoogleOauth2 < Google2
+      option :name, 'google_oauth2'
+    end
   end
 end
 
 OmniAuth.config.add_camelization 'google2', 'Google2'
+OmniAuth.config.add_camelization 'google_oauth2', 'GoogleOauth2'

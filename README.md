@@ -31,6 +31,16 @@ Rails.application.config.middleware.use OmniAuth::Builder do
 end
 ```
 
+Compatibility alias is available, so you can keep existing callback paths using `google_oauth2`:
+
+```ruby
+Rails.application.config.middleware.use OmniAuth::Builder do
+  provider :google_oauth2,
+           ENV.fetch('GOOGLE_CLIENT_ID'),
+           ENV.fetch('GOOGLE_CLIENT_SECRET')
+end
+```
+
 Google OAuth app setup: [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
 
 ## Options
@@ -53,40 +63,43 @@ Example payload from `request.env['omniauth.auth']` (realistic shape, anonymized
 
 ```json
 {
-  "uid": "123456789012345678901",
+  "uid": "111111111111111111111",
   "info": {
-    "name": "Sample Person",
-    "email": "sample@example.test",
-    "unverified_email": "sample@example.test",
+    "name": "sample-user",
+    "email": "sample@gmail.com",
+    "unverified_email": "sample@gmail.com",
     "email_verified": true,
-    "first_name": "Sample",
-    "last_name": "Person",
-    "image": "https://lh3.googleusercontent.com/example-photo=s96-c",
-    "urls": {
-      "google": "https://profiles.google.com/123456789012345678901"
-    }
+    "first_name": "sample-user",
+    "image": "https://lh3.googleusercontent.com/a/example-avatar=s96-c"
   },
   "credentials": {
     "token": "ya29.a0AfH6SM...",
     "refresh_token": "1//0gAbCdEf123456",
     "expires_at": 1772691847,
     "expires": true,
-    "scope": "openid email profile"
+    "scope": "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid"
   },
   "extra": {
-    "id_token": "header.payload.signature",
+    "raw_info": {
+      "sub": "111111111111111111111",
+      "name": "sample-user",
+      "given_name": "sample-user",
+      "picture": "https://lh3.googleusercontent.com/a/example-avatar=s96-c",
+      "email": "sample@gmail.com",
+      "email_verified": true
+    },
+    "id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6I...redacted...",
     "id_info": {
       "iss": "https://accounts.google.com",
-      "sub": "123456789012345678901"
-    },
-    "raw_info": {
-      "sub": "123456789012345678901",
-      "name": "Sample Person",
-      "given_name": "Sample",
-      "family_name": "Person",
-      "picture": "https://lh3.googleusercontent.com/example-photo=s96-c",
-      "email": "sample@example.test",
-      "email_verified": true
+      "aud": "1012003270838.apps.googleusercontent.com",
+      "sub": "111111111111111111111",
+      "email": "sample@gmail.com",
+      "email_verified": true,
+      "name": "sample-user",
+      "picture": "https://lh3.googleusercontent.com/a/example-avatar=s96-c",
+      "given_name": "sample-user",
+      "iat": 1772689518,
+      "exp": 1772693118
     }
   }
 }
@@ -118,6 +131,16 @@ This gem uses Google OpenID Connect discovery endpoints:
 - `https://accounts.google.com/o/oauth2/v2/auth`
 - `https://oauth2.googleapis.com/token`
 - `https://openidconnect.googleapis.com/v1/userinfo`
+
+## Smoke Variants
+
+After a baseline smoke succeeds, run these extra request-phase variants:
+- `?prompt=consent select_account`
+- `?login_hint=user@example.com`
+- `?hd=example.com`
+- `?include_granted_scopes=true`
+
+These verify option pass-through and help catch provider-side UX or consent regressions.
 
 ## Release
 
