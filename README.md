@@ -44,7 +44,7 @@ end
 ## Provider App Setup
 
 - Google Cloud Console: <https://console.cloud.google.com/apis/credentials>
-- Register callback URL (example): `https://your-app.example.com/auth/google_oauth2/callback`
+- Register callback URL (example): `https://your-app.example.com/auth/google2/callback` (or `google_oauth2` if using compat provider)
 
 ## Options
 
