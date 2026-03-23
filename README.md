@@ -1,4 +1,4 @@
-# OmniAuth Google2 Strategy
+# OmniAuth Google Strategy
 
 [![Test](https://github.com/icoretech/omniauth-google2/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/icoretech/omniauth-google2/actions/workflows/test.yml?query=branch%3Amain)
 [![Gem Version](https://badge.fury.io/rb/omniauth-google2.svg)](https://badge.fury.io/rb/omniauth-google2)
@@ -49,6 +49,7 @@ end
 ## Options
 
 Supported request options include:
+
 - `scope` (default: `openid email profile`)
 - `access_type` (default: `offline`)
 - `include_granted_scopes`
@@ -131,6 +132,7 @@ RAILS_VERSION='~> 8.1.0' bundle exec rake test_rails_integration
 ## Endpoints
 
 This gem uses Google OpenID Connect discovery endpoints:
+
 - `https://accounts.google.com/o/oauth2/v2/auth`
 - `https://oauth2.googleapis.com/token`
 - `https://openidconnect.googleapis.com/v1/userinfo`
@@ -138,6 +140,7 @@ This gem uses Google OpenID Connect discovery endpoints:
 ## Smoke Variants
 
 After a baseline smoke succeeds, run these extra request-phase variants:
+
 - `?prompt=consent select_account`
 - `?login_hint=user@example.com`
 - `?hd=example.com`
